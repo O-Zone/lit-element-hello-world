@@ -34,7 +34,7 @@ export class MyElement extends LitElement {
   /**
    * The name to say "Hello" to.
    */
-  @property()
+  @property({type: String})
   name = 'World';
 
   /**
