@@ -15,6 +15,7 @@ class Stars extends LitElement {
             .star {
                 font-size: 35px;
                 color: lightgray;
+                cursor: pointer;
             }
             .star.selected {
                 color: orange;
@@ -23,26 +24,25 @@ class Stars extends LitElement {
     }
 
     mouseover(e : Event) {
-        console.log(e);
-        if (e.target == null || e.target.parentElement == null)
-            return;
-        this.tmpStars = this.getStarNumber(e.target.parentElement, e.target); // Typescript I fucking HATE you! >:-7
+        this.tmpStars = this.getStarNumber(e.target);
     }
 
-    mouseout(e : Event) {
-        console.log(e);
+    mouseout() {
         this.tmpStars = 0;
     }
 
-    private getStarNumber(parent: HTMLElement, star: HTMLElement) : number {
-        let i = 1;
-        let result = 0;
-        parent?.childNodes.forEach(s => {
-            if (s === star)
-                result = i;
-            i++;
-        });
-        return result;
+    myClick(e : Event) {
+        this.stars = this.getStarNumber(e.target);
+    }
+
+    private getStarNumber(star: HTMLElement) : number {
+        let classes = star.className.split('starNumber-');
+        let starNumber : string;
+        if (classes[1].indexOf(' ') > 0)
+            starNumber = classes[1].substr(0, classes[1].indexOf(' '));
+        else
+            starNumber = classes[1];
+        return parseInt(starNumber, 10) + 1;
     }
 
     get starsHtml() {
@@ -50,11 +50,11 @@ class Stars extends LitElement {
         const s = [];
         const farvedeStars = !!tmpStars ? tmpStars : stars;
         for (let i=0; i < farvedeStars; i++) {
-            let x = html`<span class="star selected" @mouseover="${this.mouseover}" @mouseout="${this.mouseout}">&#9733;</span>`;
+            let x = html`<span class="star starNumber-${i} selected" @mouseover="${this.mouseover}" @mouseout="${this.mouseout}" @click="${this.myClick}">&#9733;</span>`;
             s.push(x);
         }
         for (let i = farvedeStars; i < starsInAll; i++) {
-            s.push(html`<span class="star">&#9733;</span>`);
+            s.push(html`<span class="star starNumber-${i}" @mouseover="${this.mouseover}" @mouseout="${this.mouseout}" @click="${this.click}">&#9733;</span>`);
         }
         return s;
     }
